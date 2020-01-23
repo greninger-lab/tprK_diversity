@@ -107,6 +107,7 @@ In general, this information will be located near the top of each individual fil
 OR run the script in R, and change the indicated variables (in this case, the path variable in line 18).
 
 **Running makeVariableFasta.R**
+
 This script works after the main pipeline has been run to generate the additional figures shown in our paper. To run this, make a new folder, and copy over final_data_dna.csv files (located in Illumina_frequencies), as well as the files located in the folder included in this GitHub repo (donorsite_figures). 
 
 Then, open up `makeVariableFasta.R` and edit the path information on line 10 to point to your new folder.
