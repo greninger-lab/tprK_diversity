@@ -3,7 +3,7 @@ This pipeline is what we used to generate the data and figures for our paper "Es
 
 The core part, tprk_pipeline.py, was designed to take Illumina and PacBio files straight off the sequencer to a final comparison table of all the different variable regions with their relative frequencies, as well as various pretty plots along the way.
 
-The main difference between this repository and previous tprk repository located [here](https://github.com/greninger-lab/tprk) is the addition of makeVariableFasta.R and supporting files located in the folder donorsite_figures/. If you already have the pipeline from the previous tprk repository set up, feel free to skip to [Running makeVariableFasta.R](#Running-makeVariableFasta.R).
+The main difference between this repository and previous tprk repository located [here](https://github.com/greninger-lab/tprk) is the addition of makeVariableFasta.R and supporting files located in the folder donorsite_figures/. If you already have the pipeline from the previous tprk repository set up, feel free to skip to [Running Parts Separately](#Running-Parts-Separately).
 
 ## Table of Contents
 * [Setup](#Setup)
@@ -11,7 +11,6 @@ The main difference between this repository and previous tprk repository located
 * [Usage](#Usage)
 * [Arguments](#Arguments)
 * [Running Parts Separately](#Running-Parts-Separately)
-* [Running makeVariableFasta.R](#Running-makeVariableFasta.R)
 
 ## Setup
 **Installs**
@@ -107,7 +106,7 @@ In general, this information will be located near the top of each individual fil
 
 OR run the script in R, and change the indicated variables (in this case, the path variable in line 18).
 
-## Running makeVariableFasta.R
+**Running makeVariableFasta.R**
 This script works after the main pipeline has been run to generate the additional figures shown in our paper. To run this, make a new folder, and copy over final_data_dna.csv files (located in Illumina_frequencies), as well as the files located in the folder included in this GitHub repo (donorsite_figures). 
 
 Then, open up `makeVariableFasta.R` and edit the path information on line 10 to point to your new folder.
