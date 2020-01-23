@@ -1,0 +1,22 @@
+##gff-version 3
+##source-version geneious 2020.0.4
+##sequence-region	tprDlocus_annot	1	17228
+tprDlocus_annot	Geneious	extracted region	1	17228	.	+	.	Name=Extracted region from Consensus
+tprDlocus_annot	Geneious	tRNA	9987	10059	.	+	.	Name=tRNA-Val
+tprDlocus_annot	Geneious	CDS	4560	6350	.	-	0	Name=tprD CDS
+tprDlocus_annot	Geneious	CDS	16429	18171	.	-	0	Name=phnU CDS
+tprDlocus_annot	Geneious	CDS	13391	15109	.	-	0	Name=ktrB CDS
+tprDlocus_annot	Geneious	CDS	10198	11661	.	+	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	6590	7819	.	-	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	7819	8949	.	-	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	12659	13351	.	-	0	Name=ktrA CDS
+tprDlocus_annot	Geneious	CDS	11914	12594	.	-	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	-187	484	.	-	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	15774	16436	.	-	0	Name=potA CDS
+tprDlocus_annot	Geneious	CDS	15290	15823	.	+	0	Name=ogt CDS
+tprDlocus_annot	Geneious	CDS	9340	9834	.	+	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	1577	2056	.	+	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	3276	3740	.	+	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	2065	2430	.	+	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	1011	1310	.	-	0	Name=hypothetical protein CDS
+tprDlocus_annot	Geneious	CDS	2534	2737	.	+	0	Name=hypothetical protein CDS
