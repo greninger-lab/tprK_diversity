@@ -3,7 +3,7 @@ This pipeline is what we used to generate the data and figures for our paper "Es
 
 The core part, tprk_pipeline.py, was designed to take Illumina and PacBio files straight off the sequencer to a final comparison table of all the different variable regions with their relative frequencies, as well as various pretty plots along the way.
 
-The main difference between this repository and previous tprk repository located [here](github.com/greninger-lab/tprk/) is the addition of makeVariableFasta.R and supporting files located in the folder donorsite_figures/. If you already have the pipeline from the previous tprk repository set up, feel free to skip to [Running makeVariableFasta.R](#Running-makeVariableFasta.R).
+The main difference between this repository and previous tprk repository located [here](https://github.com/greninger-lab/tprk) is the addition of makeVariableFasta.R and supporting files located in the folder donorsite_figures/. If you already have the pipeline from the previous tprk repository set up, feel free to skip to [Running makeVariableFasta.R](#Running-makeVariableFasta.R).
 
 ## Table of Contents
 * [Setup](#Setup)
