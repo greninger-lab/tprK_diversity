@@ -6,14 +6,14 @@ import os
 import regex
 
 # Filters allreads.csv and outputs allreads_filtered.csv based on flags -f and -c.
-# (Default relative freq is 0.2 and count is 5.) Thrown away reads are put into allreads_thrownout.csv.
+# (Default relative freq is 0.2 and count is 10.) Thrown away reads are put into allreads_thrownout.csv.
 def filter_table(relative_freq_filter, count_filter, table, is_heatmap):
 	line_num = 0
 	table_csv = open(table, "r")
 	table_lines = table_csv.readlines()
 	table_reads_thrownout = open(table.split(".csv")[0] + "_thrownout.csv", "w+")
 
-	print ("Filtering " + table + " by count > " + str(count_filter) + " and relative frequency > " + str(relative_freq_filter) + "...")
+	print ("Filtering " + table + " by count >= " + str(count_filter) + " and relative frequency >= " + str(relative_freq_filter) + "...")
 	for line in table_lines:
 		line = line.rstrip()
 		# Ignores the first line and initializes files.
@@ -137,10 +137,10 @@ if __name__ == '__main__':
 		'By default, this is set to 0.2.')
 	parser.add_argument('-c', '--count_filter', required=False,
 		help='Specify by what count an additional filtered final merged table and visualizations should be sorted at. '
-		'By default, this is set to 5.')
+		'By default, this is set to 10.')
 	parser.add_argument('-i', '--illumina_filter', action='store_true', required=False,
 		help='Specify if PacBio reads should only include Illumina-supported reads that pass the filters given. '
-		'By default, relative freq is set to 0.2 and count is set to 5.')
+		'By default, relative freq is set to 0.2 and count is set to 10.')
 	parser.add_argument('-pacbio', action='store_true', required = False, help='Write this flag to specify '
 		'that there are only PacBio files here. Comparison figures to Illumina will not be created.')
 	parser.add_argument('-illumina', action='store_true', required = False, help='Write this flag to specify '
@@ -163,7 +163,7 @@ if __name__ == '__main__':
 	if args.count_filter:
 		count_filter = int(args.count_filter)
 	else:
-		count_filter = 5
+		count_filter = 10
 	if args.pacbio:
 		pacbio_flag = "--pacbio"
 	else:
@@ -197,7 +197,7 @@ if __name__ == '__main__':
 		pacbio_samples_list.append(pacbio_sample)
 
 
-	print("Will filter final products for > " + str(relative_freq_filter) + " relative frequency and > " + str(count_filter) + " count.")
+	print("Will filter final products for >= " + str(relative_freq_filter) + " relative frequency and >= " + str(count_filter) + " count.")
 	if args.illumina_filter:
 		print("Will only include PacBio reads supported by Illumina reads that pass the filter.")
 
