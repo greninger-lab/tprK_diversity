@@ -7,19 +7,19 @@
 ## Set path to folder with final_data_dna.csv files. This can be found in the Illumina_frequencies 
 ## after running the main pipeline tprk_pipeline.py. Copy these csv files into a new folder that also contains the file contents
 ## of the "donorsite_figures" folder in tprk_paper2-master (eg. tprDlocus.fasta).
-path <- "/Users/uwvirongs/Documents/Michelle/tprk_pipeline/trimmed/Illumina_frequencies/blast3/"
+path <- "/Users/uwvirongs/Documents/Michelle/tprk_pipeline/2.01_donorsite_redo/"
 
 list.of.packages <- c("ggplot2","stringr","Biostrings","dplyr","data.table","gggenes","seqinr","phylotools","cowplot")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 suppressMessages(invisible(lapply(list.of.packages,library,character.only=T)))
 
+setwd(path)
+
 colorscheme <- c("V1" = "#e41a1c", "V2" = "#377eb8", "V3" = "#4daf4a", "V4" = "gold3",
                  "V5" = "#ff7f00","V6" = "#984ea3","V7" = "#a65628")
 
-setwd(path)
-
-##Read in all of the over5*.fasta files to get the nucleotide sequences of the variable regions
+##Read in all of the over5*.csv files to get the nucleotide sequences of the variable regions
 filenames <- Sys.glob("over5*")
 for (i in c(1:length(filenames))){
   seq <- NULL
@@ -210,7 +210,6 @@ variableRegions$sequence_count <- NULL
 ## Name the variable regions
 variableRegions_ogg <- variableRegions
 variableRegions <- variableRegions_ogg 
-path <- "/Users/uwvirongs/Documents/Michelle/tprk_pipeline/trimmed/Illumina_frequencies/blast2/"
 oldannotations <- read.table(paste0(path,"tprDlocus_oldAnnotations2.csv"),sep=",",header=TRUE)
 oldannotations <- oldannotations[order(oldannotations$Minimum),]
 oldannotations$region <- str_split_fixed(oldannotations$Name,"-",2)[,1]
@@ -356,22 +355,7 @@ ggsave(filename="Figure3A_tprDLocus_DonorSites_Percentage_GeneLabeled2.pdf",heig
 
 total$molecule <- -20000
 
-# ggplot(total,aes(xmin = start, xmax = end,y=molecule,label=gene)) + 
-#   geom_bar(data=subset(total,type=="variable"),aes(x=start,y=count,fill=region),
-#            stat="identity",position = "stack",width = 25) + scale_y_continuous() + xlim(0,12000) +
-#   theme(legend.position = "none") + theme_classic() + xlab ("Nucleotide") + ylab("Count") + 
-#   theme(axis.line.x = element_line(size=0)) + 
-#   scale_fill_manual(values = c("V1" = "#e41a1c", "V2" = "#377eb8", "V3" = "#4daf4a", "V4" = "gold3",
-#                                "V5" = "#ff7f00","V6" = "#984ea3","V7" = "#a65628", 
-#                                "hp" = "#999999", "tprD" = "#e41a1c", "dat" ="#999999","ntpJ" = "#999999"),
-#                     breaks = region, labels=region, name = "Region") + 
-#   geom_gene_arrow(data=subset(total,type=="gene"),
-#                   aes(xmin = start, xmax = end,y=molecule, fill=gene, alpha=0.7, forward = direction)) + 
-#   geom_gene_label(align = "centre") + scale_alpha(guide = 'none')
-# 
-# ggsave(filename="tprDLocus_DonorSites_log_labeled.pdf",height = 4, width=8)
 
-##### How did we figure out about the sequence length versus alignment length
 ####
 groupblast <- blasthits_100 %>% group_by(qseqid) %>% summarise(Max_End=max(qend),Min_Start=min(qstart))
 groupblast <- mutate(groupblast,blastlength=Max_End-Min_Start+1)
@@ -400,10 +384,16 @@ blastseqlength_scatter <- ggplot(allvariable, aes(x=seqlength,y=blastlength,colo
   geom_abline(slope=1,intercept=0) + xlim(15,125) + ylim(15,125)   + 
   xlab("Sequence Length (bp)") + ylab("Donor Site Alignment Length (bp)")
 
+ggsave("Figure_blastlength_seqlength_scatter_122319.pdf",width=4,height=3)
+
 blastseqlength_scatter_og <- ggplot(allvariable_og, aes(x=seqlength,y=blastlength,color=region)) + 
   scale_color_manual(values=colorscheme) + geom_point(size=1) + theme_minimal() + 
   geom_abline(slope=1,intercept=0) + xlim(15,125) + ylim(15,125)   + 
   xlab("Sequence Length (bp)") + ylab("Donor Site Alignment Length (bp)")
+
+#blastseqlength_histo <- ggplot(allvariable,aes(x=abs(diff),fill=region)) + geom_histogram() + 
+#  scale_fill_manual(values=colorscheme) + theme_minimal() + labs(fill='Region') + 
+#  xlab("Sequence-Alignment Length Difference") + ylab("Count")
 
 blastseqlength_histo <- ggplot(allvariable,aes(x=abs(diff),y=count,fill=region)) + geom_bar(stat="identity") + 
   scale_fill_manual(values=colorscheme) + theme_minimal() + labs(fill='Region') + 
@@ -413,12 +403,51 @@ blastseqlength_histo_og <- ggplot(allvariable_og,aes(x=abs(diff),y=count,fill=re
   scale_fill_manual(values=colorscheme) + theme_minimal() + labs(fill='Region') + 
   xlab("Sequence-Alignment Length Difference") + ylab("Count")
 
+plot_grid(blastseqlength_scatter + theme(legend.position="none"), blastseqlength_histo, labels = c('A', 'B'), label_size = 10)
+
+ggsave("Figure_blastlength_seqlength_123119.pdf",width=7,height=3)
+
 plot_grid(blastseqlength_scatter_og + theme(legend.position="none"), blastseqlength_histo_og,
           blastseqlength_scatter + theme(legend.position="none"), blastseqlength_histo,
           labels = c('A','B','C', 'D'), label_size = 10, nrow=2, ncol=2)
 
 ggsave("FigureS3_blastlength_seqlength_A-D.pdf",width=8,height=6)
 
+
+### Intermediate code that helped identify conserved sequences in V2, V3, and V5.
+### V3 check
+V3_seq12 <- str_sub(allvariable[allvariable$region == "V3",]$seq.text,-24,-1)
+V3_seq12counts <- as.integer(allvariable[allvariable$region == "V3",]$count)
+mylist <- as.data.frame(V3_seq12,V3_seq12counts)
+xtabs(V3_seq12counts ~ V3_seq12, mylist)
+sum(V3_seq12counts)
+mylist %>% group_by(V3_seq12 ) %>% summarise(V3_seq12counts=sum(V3_seq12counts))
+V3list <- xtabs(V3_seq12counts ~ V3_seq12, mylist)
+V3list <- as.data.frame(V3list)
+V3list <- mutate(V3list,error=round(Freq/773239*100,3))
+adist(V3list$V3_seq12,"TGTCGGGGCTAAGGTGAGTATGA")
+
+ggplot(subset(allvariable,region == "V3"),aes(x=diff)) + geom_histogram()
+
+##V5 check 
+V5_seq13 <- str_sub(allvariable[allvariable$region == "V5",]$seq.text,-14,-1)
+V5_seq13counts <- as.integer(allvariable[allvariable$region == "V5",]$count)
+mylist <- as.data.frame(V5_seq13,V5_seq13counts)
+xtabs(V5_seq13counts ~ V5_seq13, mylist)
+sum(V5_seq13counts)
+mylist %>% group_by(V5_seq13) %>% summarise(V5_seq13counts=sum(V5_seq13counts))
+
+##V2 check 
+V2_seq7 <- str_sub(allvariable[allvariable$region == "V2",]$seq.text,-19,-1)
+V2_seq7counts <- as.integer(allvariable[allvariable$region == "V2",]$count)
+mylist <- as.data.frame(V2_seq7,V2_seq7counts)
+xtabs(V2_seq7counts ~ V2_seq7, mylist)
+sum(V2_seq7counts)
+mylist %>% group_by(V2_seq7) %>% summarise(V2_seq7counts=sum(V2_seq7counts))
+allvariable[allvariable$region == "V2",]$diff
+
+
+allvariable <- allvariable[allvariable$region == "V5",]$seqlength - 13
 
 #######
 
@@ -449,7 +478,7 @@ for (i in c(1:length(blasthits2$qend))){
       print(paste0("var start ",variableRegions_order$start[j]))
       print(paste0("var end ",variableRegions_order$end[j]))
       blasthits2$name[i] <- variableRegions_order$name[j]
-    }
+      }
   }
   if (blasthits2$rank[i]==1){
     variableRegions_order$firstcount[myindex] <- variableRegions_order$firstcount[myindex] + variable_match$count
@@ -490,3 +519,107 @@ plot_grid(Fig4A+ theme(legend.key.size = unit(0.5, "cm")),
           Fig4B+ theme(legend.key.size = unit(0.5, "cm")),
           labels = c('A','B'),rel_widths = c(1, 2.2))
 ggsave(filename="Figure4AB_DonorSites_Events-Positions-Percentage_Stacked.pdf",height = 3, width=8)
+
+
+ggplot(variableRegions_order2,aes(x=start,y=rankpercentage,fill=rankset)) + geom_bar(stat="identity",width=25) + 
+  theme_minimal() + labs(fill='Region') + xlim(0,5000) +
+  xlab("Sequence-Alignment Length Difference") + ylab("percentage")
+
+ggplot(variableRegions_order3,aes(x=as.factor(start),y=rankpercentpercent,fill=rankset)) + 
+  geom_bar(stat="identity",position="stack") + 
+  theme_minimal() + labs(fill='Region') + theme(axis.text.x = element_text(angle = 90)) +
+  xlab("Sequence-Alignment Length Difference") + ylab("percentage") + facet_wrap(~region, scales="free", nrow=1)
+
+variableRegions_order4 <- variableRegions_order2[variableRegions_order2$rankpercentage > 0,]
+variable4 <- data.frame(variableRegions_order2$start, variableRegions_order2$end,
+                        variableRegions_order2$region,variableRegions_order2$rankset,variableRegions_order2$rankpercentage)
+allowed <- aggregate(variableRegions_order4$region, list(variableRegions_order4$region,variableRegions_order4$rankset), length)
+######
+
+blasthits4 <- blasthits2 %>% group_by(qseqid) %>% mutate(varregions=n(),distinctregions=n_distinct(name))
+blasthits_overlap <- ungroup(blasthits4[which(blasthits4$varregions != blasthits4$distinctregions),])
+length(unique(blasthits_overlap$qseqid))
+blasthits_overlap %>% group_by(qseqid) %>% group_by(region) %>% summarise(n())
+blasthits_overlap2 <- data.frame(blasthits_overlap$qseqid,blasthits_overlap$interval,blasthits_overlap$name)
+
+###### Let's figure out if there's replacement or not.  There is not really much replacement.
+
+blasthits3 <- blasthits2
+blasthits2 <- blasthits3
+blasthits2$replacement <- FALSE
+j<-1
+blasthits2 <- blasthits2[order(blasthits2$qseqid),]
+for (i in c(1:length(blasthits2$qend))){
+  j<-i+1
+  while (blasthits2$qseqid[i]==blasthits2$qseqid[j]) {
+    if ((inrange(blasthits2$sstart[i], blasthits2$sstart[j], blasthits2$send[j], incbounds=TRUE)) |
+        (inrange(blasthits2$sstart[i], blasthits2$send[j], blasthits2$sstart[j], incbounds=TRUE))){
+        blasthits2$replacement[i] <- TRUE
+        blasthits2$replacement[j] <- TRUE
+  }
+  j<-j+1
+  }
+}
+length(unique(blasthits2$qseqid))
+replacementset <- blasthits2[blasthits2$replacement==TRUE,]
+
+######
+
+blasthits2
+blasthits2$replacement <- FALSE
+j<-1
+blasthits2 <- blasthits2[order(blasthits2$qseqid),]
+for (i in c(1:length(blasthits2$qend))){
+  j<-i+1
+  while (blasthits2$qseqid[i]==blasthits2$qseqid[j]) {
+    if ((inrange(blasthits2$sstart[i], blasthits2$sstart[j], blasthits2$send[j], incbounds=TRUE)) |
+        (inrange(blasthits2$sstart[i], blasthits2$send[j], blasthits2$sstart[j], incbounds=TRUE))){
+      blasthits2$replacement[i] <- TRUE
+      blasthits2$replacement[j] <- TRUE
+    }
+    j<-j+1
+  }
+}
+
+#########
+
+blasthits2 <- blasthits_100 %>% dplyr::group_by(qseqid) %>% dplyr::mutate(rank=dense_rank(qstart))
+variableRegions_order1 <- variableRegions
+variableRegions_order2 <- variableRegions
+variableRegions_order3 <- variableRegions
+variableRegions_order1$rank <- 1
+variableRegions_order2$rank <- 2
+variableRegions_order3$rank <- 3
+variableRegions_order <- rbind(variableRegions_order1,variableRegions_order2,variableRegions_order3)
+variableRegions_order$rankcount <- 0
+variableRegions_order$rankpercentage <- 0
+for (i in c(1:length(blasthits2$qend))){
+  for (j in c(1:length(variableRegions$start))){
+    if (blasthits2$region[i] != as.character(variableRegions$region[j])) next()
+    if ((inrange(blasthits2$sstart[i], variableRegions$start[j], variableRegions$end[j], incbounds=TRUE)) |
+        (inrange(blasthits2$sstart[i], variableRegions$end[j],variableRegions$start[j], incbounds=TRUE))){
+      variable_match <- variableRegions[j,]
+      myindex <- j
+      print(i)
+      print(paste0("start ",blasthits2$sstart[i]))
+      print(paste0("var start ",variableRegions$start[j]))
+      print(paste0("var end ",variableRegions$end[j]))
+    }
+  }
+  if (blasthits2$rank[i]==1){
+    variableRegions_order$firstcount[myindex] <- variableRegions_order$firstcount[myindex] + variable_match$count
+    variableRegions_order$firstpercentage[myindex] <- variableRegions_order$firstpercentage[myindex] + variable_match$percentage
+  }
+  if (blasthits2$rank[i]==2){
+    variableRegions_order$secondcount[myindex] <- variableRegions_order$secondcount[myindex] + variable_match$count
+    variableRegions_order$secondpercentage[myindex] <- variableRegions_order$secondpercentage[myindex] + variable_match$percentage
+  }
+  if (blasthits2$rank[i]==3){
+    variableRegions_order$thirdcount[myindex] <- variableRegions_order$thirdcount[myindex] + variable_match$count
+    variableRegions_order$thirdpercentage[myindex] <- variableRegions_order$thirdpercentage[myindex] + variable_match$percentage
+  }
+}
+
+ggplot(variableRegions_order,aes(x=start,y=firstpercentage,fill=region)) + geom_bar(stat="identity",position = "dodge") + 
+  scale_fill_manual(values=colorscheme) + theme_minimal() + labs(fill='Region') + 
+  xlab("Sequence-Alignment Length Difference") + ylab("Count")
